@@ -20,6 +20,8 @@ provider:
             - 'dynamodb:UpdateItem'
             - 'dynamodb:DeleteItem'
           Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-postTable-${sls:stage}
+  httpApi:
+    cors: true
   environment: # Environment variables (process.env. in JS)
     DYNAMODB_POST_TABLE: ${self:service}-postTable-${sls:stage}
 
@@ -28,23 +30,10 @@ plugins:
   - serverless-offline
 
 
-functions: ${file(rest/gateway.yml)}
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
-  createPost:
-    handler: createPost.createPost
-    events:
-      - httpApi:
-          path: /
-          method: post
+functions: ${file(rest-api/gateway.yml)}
 
 resources:
-  Resources:
-    postTable: ${file(database/post.yml)}
+  Resources: ${file(database/post.yml)}
 
 package:
   exclude:

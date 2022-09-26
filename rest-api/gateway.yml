@@ -1,39 +1,42 @@
 createPost: # POST posts/:username
-  handler: .rest-api/posts.createPost
+  handler: rest-api/posts.createPost
   events:
     - httpApi:
-        path: posts/{username}
+        path: /posts/{username}
         method: POST
-        cors: true
 
 getPost: # GET posts/:username/:timestamp
-  handler: .rest-api/posts.getPost
+  handler: rest-api/posts.getPost
   events:
     - httpApi:
-        path: posts/{username}/{timestamp}
+        path: /posts/{username}/{timestamp}
         method: GET
-        cors: true    
 
 editPost: # PUT posts/:username/:timestamp
-  handler: .rest-api/posts.editPost
+  handler: rest-api/posts.editPost
   events:
     - httpApi:
-        path: posts/{username}/{timestamp}
+        path: /posts/{username}/{timestamp}
         method: PUT
-        cors: true
 
 deletePost: # DELETE posts/:username/:timestamp
-  handler: .rest-api/posts.deletePost
+  handler: rest-api/posts.deletePost
   events:
     - httpApi:
-        path: posts/{username}/{timestamp}
+        path: /posts/{username}/{timestamp}
         method: DELETE
-        cors: true
 
 getUserPosts: # GET posts/:username
-  handler: .rest-api/posts.getUserPosts
+  handler: rest-api/posts.getUserPosts
   events:
     - httpApi:
-        path: posts/{username}
+        path: /posts/{username}
         method: GET
-        cors: true
+        
+
+hello:
+  handler: rest-api/handler.hello
+  events:
+    - httpApi:
+        path: /
+        method: get
