@@ -1,5 +1,5 @@
 createPost: # POST posts/:username
-  handler: posts.createPost
+  handler: .rest-api/posts.createPost
   events:
     - httpApi:
         path: posts/{username}
@@ -7,7 +7,7 @@ createPost: # POST posts/:username
         cors: true
 
 getPost: # GET posts/:username/:timestamp
-  handler: posts.getPost
+  handler: .rest-api/posts.getPost
   events:
     - httpApi:
         path: posts/{username}/{timestamp}
@@ -15,7 +15,7 @@ getPost: # GET posts/:username/:timestamp
         cors: true    
 
 editPost: # PUT posts/:username/:timestamp
-  handler: posts.editPost
+  handler: .rest-api/posts.editPost
   events:
     - httpApi:
         path: posts/{username}/{timestamp}
@@ -23,7 +23,7 @@ editPost: # PUT posts/:username/:timestamp
         cors: true
 
 deletePost: # DELETE posts/:username/:timestamp
-  handler: posts.deletePost
+  handler: .rest-api/posts.deletePost
   events:
     - httpApi:
         path: posts/{username}/{timestamp}
@@ -31,7 +31,7 @@ deletePost: # DELETE posts/:username/:timestamp
         cors: true
 
 getUserPosts: # GET posts/:username
-  handler: posts.getUserPosts
+  handler: .rest-api/posts.getUserPosts
   events:
     - httpApi:
         path: posts/{username}
