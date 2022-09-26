@@ -8,8 +8,7 @@ provider:
   name: aws
   region: eu-west-3
   runtime: nodejs14.x
-  environment: # Environment variables (process.env. in JS)
-    DYNAMODB_POST_TABLE: ${self:service}-postTable-${sls:stage}
+  stage: dev
   iam:
     role:
       statements:
@@ -21,6 +20,13 @@ provider:
             - 'dynamodb:UpdateItem'
             - 'dynamodb:DeleteItem'
           Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-postTable-${sls:stage}
+  environment: # Environment variables (process.env. in JS)
+    DYNAMODB_POST_TABLE: ${self:service}-postTable-${sls:stage}
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
 
 functions:
   hello:
@@ -38,9 +44,11 @@ functions:
 
 resources:
   Resources:
-    PostTable:
+    postTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy : Retain
       Properties:
+        TableName: ${self:service}-postTable-${sls:stage}
         AttributeDefinitions:
           - AttributeName: username
             AttributeType: S
@@ -52,7 +60,9 @@ resources:
           - AttributeName: timestamp
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:service}-postTable-${sls:stage}
 
-plugins:
-  - serverless-offline
+package:
+  exclude:
+    - node_modules/dynamodb-localhost/**
+    - node_modules/serverless-dynamodb-local/**
+    - node_modules/serverless-offline/**
