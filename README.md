@@ -1,92 +1,58 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Setup
 
-# Serverless Framework Node HTTP API on AWS
+## Prerequisites
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+- Install [Serverless Framework](https://www.serverless.com/framework/docs/getting-started)
+- Create [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key)
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+# Design Choices
 
-## Usage
+## Data Modeling
 
-### Deployment
+There are some entities for which it is worth thinking about, but they are not in the scope of this kata, they will be ~~**striked out**~~.
 
-```
-$ serverless deploy
-```
+### Entities
 
-After deploying, you should see output similar to:
+- ~~A **User** represents someone that has signed up to the application.~~
+- A **Post** represent a user writing something on his own timeline.
 
-```bash
-Deploying aws-node-http-api-project to stage dev (us-east-1)
+### Access patterns
 
-✔ Service deployed to stack aws-node-http-api-project-dev (152s)
+- ~~**Users**: It should be possible to *Create*, *Read* and *Delete* users. Users must have an unique username.~~
+  
+- **Posts**: It should be possible to *Create*, *Read* and *Delete* posts. A post needs an username and some text content to be created. Some sort of id will be needed to read or delete a single post.
 
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: aws-node-http-api-project-dev-hello (1.9 kB)
-```
+- **Posts of User**: It should be possible to get all posts from a single user in reverse-chronological order.
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+### DynamoDB
 
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
-
-Which should result in response similar to the following (removed `input` content for brevity):
-
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
-
-### Local development
-
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
+This project will use DynamoDB. It is fine for the requirements of this exercise but it could be worth considering other options as the requiremests get expanded, more on this later.
 
 ```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
+PostsTable
+
+Entity  Username (PK)    Timestamp (SK)    Content
+Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
 ```
 
+The username and timestamp, taken together, could be enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
 
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+---
 
-```bash
-serverless plugin install -n serverless-offline
+## Thoughts on expanding this project
+
+As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)
+
+At the moment we just have a collection of posts. If we wanted to add information about the user in a single DynamoDB table it could look something like this:
+
+```
+MainTable
+
+Entity    Partition Key       Sort Key
+User      USER#<USERNAME>     METADATA#<USERNAME>
+Post      USER#<USERNAME>     POST#<USERNAME>#<TIMESTAMP>
 ```
 
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
+Having the same Partition Key `USER#<USERNAME>` for both Users and Posts will allow to retrieve both the user's profile and posts in a **single transaction**. We would query for the Partition Key to be equal to a specific `USER#<USERNAME>`, and the Sort Key to be between `METADATA#<USERNAME>` and `POST$` (`$` comes just after `#` in ASCII).
 
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
+As even more relations get implemented (friends, comments, likes, friend feeds and so on) a graph database could be more suitable for this kind of application.
