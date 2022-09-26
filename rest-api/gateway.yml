@@ -1,0 +1,39 @@
+createPost: # POST posts/:username
+  handler: posts.createPost
+  events:
+    - httpApi:
+        path: posts/{username}
+        method: POST
+        cors: true
+
+getPost: # GET posts/:username/:timestamp
+  handler: posts.getPost
+  events:
+    - httpApi:
+        path: posts/{username}/{timestamp}
+        method: GET
+        cors: true    
+
+editPost: # PUT posts/:username/:timestamp
+  handler: posts.editPost
+  events:
+    - httpApi:
+        path: posts/{username}/{timestamp}
+        method: PUT
+        cors: true
+
+deletePost: # DELETE posts/:username/:timestamp
+  handler: posts.deletePost
+  events:
+    - httpApi:
+        path: posts/{username}/{timestamp}
+        method: DELETE
+        cors: true
+
+getUserPosts: # GET posts/:username
+  handler: posts.getUserPosts
+  events:
+    - httpApi:
+        path: posts/{username}
+        method: GET
+        cors: true
