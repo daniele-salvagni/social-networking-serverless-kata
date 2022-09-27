@@ -32,11 +32,3 @@ getUserPosts: # GET posts/:username
     - httpApi:
         path: /posts/{username}
         method: GET
-
-
-hello:
-  handler: http-api/handler.hello
-  events:
-    - httpApi:
-        path: /
-        method: get
