@@ -1,11 +1,13 @@
 "use strict";
 
-const dynamodb = require('../../database/dynamodb');
+// const dynamodb = require('../../database/dynamodb');
 const response = require("../response");
-const db = dynamodb.documentClient;
- 
+// const db = dynamodb.documentClient;
 
-module.exports.createPost = async (event) => {
+// Using async-await vs callbacks in AWS Lambda
+// https://advancedweb.hu/comparing-async-javascript-functions-and-callbacks-on-aws-lambda/
+
+module.exports = deps => async (event) => {
   const body = JSON.parse(event.body);
 
   const params = {
@@ -18,7 +20,12 @@ module.exports.createPost = async (event) => {
     },
   };
 
-  await db.put(params).promise();
+  try {
+    // Promisify or lambda will exit
+    await deps.dynamo.put(params).promise();
+  } catch (error) {
+    //console.log??
+  }
  
   return response.create(201);
 

@@ -1,11 +1,9 @@
 "use strict";
 
-const dynamodb = require('../../database/dynamodb');
 const response = require("../response");
-const db = dynamodb.documentClient;
 
 
-module.exports.getUserPosts = async (event) => {
+module.exports = deps => async (event) => {
 
   const params = {
     TableName: process.env.DYNAMODB_POST_TABLE,
@@ -16,7 +14,11 @@ module.exports.getUserPosts = async (event) => {
     KeyConditionExpression: "username = :username",
   };
 
-  const result = await db.query(params).promise();
+  try {
+    const result = await deps.dynamo.query(params).promise();
+  } catch (error) {
+    
+  }
 
   if (result.Count === 0) return response.create(404);
 
