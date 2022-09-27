@@ -7,18 +7,13 @@ module.exports = deps => async (event) => {
 
   const params = {
     TableName: process.env.DYNAMODB_POST_TABLE,
-
-    ExpressionAttributeValues: {
-      ":username": event.pathParameters.username,
-    },
-    KeyConditionExpression: "username = :username",
   };
 
   let result;
 
   try {
-    result = await deps.dynamo.query(params).promise();
-    process.env.IS_OFFLINE && console.log("Query success");
+    result = await deps.dynamo.scan(params).promise();
+    process.env.IS_OFFLINE && console.log("Scan success");
 
     if (result.Count === 0) {
       process.env.IS_OFFLINE && console.info("No results found");
@@ -35,7 +30,7 @@ module.exports = deps => async (event) => {
     });
 
   } catch (error) {
-    process.env.IS_OFFLINE && console.warn("Qyery error =", error);
+    process.env.IS_OFFLINE && console.warn("Scan error =", error);
     return response.create(500);
   }
 
