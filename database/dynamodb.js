@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * The general idea and some of the code is from this plugin:
+ * https://github.com/99x/serverless-dynamodb-client/blob/master/src/index.js
+ */
+
 const AWS = require('aws-sdk');
 
 const HOST = process.env.LOCAL_DDB_HOST || 'localhost';

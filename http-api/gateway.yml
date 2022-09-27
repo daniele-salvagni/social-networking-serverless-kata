@@ -34,7 +34,7 @@ createPost: # POST posts/:username
 #        method: GET
 
 getUserPosts: # GET posts/:username
-  handler: http-api/posts/handler.getUserPosts
+  handler: http-api/handler.getUserPosts
   events:
     - httpApi:
         path: /posts/{username}

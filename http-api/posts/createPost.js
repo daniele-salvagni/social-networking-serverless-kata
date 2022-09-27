@@ -1,12 +1,13 @@
 "use strict";
 
-// const dynamodb = require('../../database/dynamodb');
 const response = require("../response");
-// const db = dynamodb.documentClient;
 
-// Using async-await vs callbacks in AWS Lambda
-// https://advancedweb.hu/comparing-async-javascript-functions-and-callbacks-on-aws-lambda/
+/**
+ * Reasons for sing async-await vs callbacks in AWS Lambda
+ * https://advancedweb.hu/comparing-async-javascript-functions-and-callbacks-on-aws-lambda/
+ */
 
+// Factory function creating and returning the handler function
 module.exports = deps => async (event) => {
   const body = JSON.parse(event.body);
 
@@ -21,10 +22,10 @@ module.exports = deps => async (event) => {
   };
 
   try {
-    // Promisify or lambda will exit
     await deps.dynamo.put(params).promise();
   } catch (error) {
-    //console.log??
+    console.warn(error);
+    return response.create(500);
   }
  
   return response.create(201);
