@@ -26,7 +26,7 @@ getPost: # GET posts/:username/:unixtime
        path: /posts/{username}/{unixtime}
        method: GET
 
-getPosts: # GET posts
+getAllPosts: # GET posts
  handler: http-api/handler.getAllPosts
  events:
    - httpApi:

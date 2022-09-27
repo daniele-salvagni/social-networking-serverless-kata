@@ -1,42 +1,16 @@
-"use strict";
+'use strict'
 
-const response = require("../response");
+const response = require('../response');
 
 
 module.exports = deps => async (event) => {
 
-  const params = {
-    TableName: process.env.DYNAMODB_POST_TABLE,
+  const result = await deps.db.queryUser(event);
 
-    ExpressionAttributeValues: {
-      ":username": event.pathParameters.username,
-    },
-    KeyConditionExpression: "username = :username",
-  };
+  if (!result) return response.create(500);
 
-  let result;
+  if (!Object.keys(result).length) return response.create(404);
 
-  try {
-    result = await deps.dynamo.query(params).promise();
-    process.env.IS_OFFLINE && console.log("Query success");
-
-    if (result.Count === 0) {
-      process.env.IS_OFFLINE && console.info("No results found");
-      return response.create(404);
-    }
-    
-    return response.create(200, {
-      total: result.Count,
-      posts: result.Items.map((post) => ({
-        username: post.username,
-        unixtime: post.unixtime,
-        content: post.content,
-      })),
-    });
-
-  } catch (error) {
-    process.env.IS_OFFLINE && console.warn("Qyery error =", error);
-    return response.create(500);
-  }
+  return response.create(200, result);
 
 };

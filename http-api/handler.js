@@ -1,32 +1,34 @@
 'use strict'
+const DynamodbPostWrapper = require('./database/DynamoPostWrapper')
+const dynamodb = require('./database/dynamodb');
 
 /**
- * A simple way of injecting dependencies in Lambda functions
- * Idea taken from this post: https://blog.codecentric.de/en/2019/02/testable-lambda/
+ * Inject dependencies and link the endpoint to its module.
+ * https://blog.codecentric.de/en/2019/02/testable-lambda/
  */
 
-const dynamodb = require('../database/dynamodb');
+const postWrapper = new DynamodbPostWrapper(dynamodb.documentClient);
 
 module.exports.createPost = require('./posts/createPost')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
 
 module.exports.deletePost = require('./posts/deletePost')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
 
 module.exports.editPost = require('./posts/editPost')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
 
 module.exports.getPost = require('./posts/getPost')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
 
 module.exports.getAllPosts = require('./posts/getAllPosts')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
 
 module.exports.getUserPosts = require('./posts/getUserPosts')({
-  dynamo: dynamodb.documentClient
+  db: postWrapper,
 });
