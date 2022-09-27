@@ -52,7 +52,7 @@ plugins:
 functions: ${file(http-api/gateway.yml)}
 
 resources:
-  Resources: ${file(database/posts.yml)}
+  Resources: ${file(http-api/database/posts.yml)}
 
 package:
   exclude:
