@@ -24,13 +24,32 @@ provider:
     cors: true
   environment: # Environment variables (process.env. in JS)
     DYNAMODB_POST_TABLE: ${self:service}-postTable-${sls:stage}
+    LOCAL_DDB_PORT: 8000
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  dynamodb:
+    stages:
+      - dev
+    start:
+      #docker: true
+      port: 8000
+      inMemory: true
+      migrate: true
+      #seed: true
+    seed:
+      domain:
+        sources:
+          - table: ${self:service}-postTable-${sls:stage}
+            #sources: [./offline/migrations/todo-seed.json]
+
+
 
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
 
-
-functions: ${file(rest-api/gateway.yml)}
+functions: ${file(http-api/gateway.yml)}
 
 resources:
   Resources: ${file(database/post.yml)}

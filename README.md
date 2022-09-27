@@ -5,6 +5,16 @@
 - Install [Serverless Framework](https://www.serverless.com/framework/docs/getting-started)
 - Create [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key)
 
+## API Endpoints
+
+```
+POST   posts/:username               body: { content: "Lorem ipsum..." }
+GET    posts/:username
+PUT    posts/:username/:timestamp    body: { content: "Dolor sit amet..." }
+GET    posts/:username/:timestamp
+DELETE posts/:username/:timestamp
+```
+
 # Design Choices
 
 ## Data Modeling
