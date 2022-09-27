@@ -1,0 +1,42 @@
+createPost: # POST posts/:username
+  handler: http-api/posts/createPost.createPost
+  events:
+    - httpApi:
+        path: /posts/{username}
+        method: POST
+
+#getPost: # GET posts/:username/:unixtime
+#  handler: http-api/posts.getPost
+#  events:
+#    - httpApi:
+#        path: /posts/{username}/{unixtime}
+#        method: GET
+#
+#editPost: # PUT posts/:username/:unixtime
+#  handler: http-api/posts.editPost
+#  events:
+#    - httpApi:
+#        path: /posts/{username}/{unixtime}
+#        method: PUT
+#
+#deletePost: # DELETE posts/:username/:unixtime
+#  handler: http-api/posts.deletePost
+#  events:
+#    - httpApi:
+#        path: /posts/{username}/{unixtime}
+#        method: DELETE
+#
+getUserPosts: # GET posts/:username
+  handler: http-api/posts/getUserPosts.getUserPosts
+  events:
+    - httpApi:
+        path: /posts/{username}
+        method: GET
+
+
+hello:
+  handler: http-api/handler.hello
+  events:
+    - httpApi:
+        path: /
+        method: get
