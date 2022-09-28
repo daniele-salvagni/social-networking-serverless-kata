@@ -41,116 +41,90 @@ Install the [Serverless Framework](https://www.serverless.com/framework/docs/get
       export AWS_ACCESS_KEY_ID=<your-key-here>
       export AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
 
+  Deploy to AWS
+
+      serverless deploy
+
 
 ## 📫 API Endpoints
 
-> The endpoints that this Kata required to implement are marked with ✅
+> The endpoints that this Kata required to implement are marked with ✅, extras with 🟪
 
-    ✅ POST    posts/:username             # Create a new post       
-    ✅ GET     posts/:username             # Get user's timeline     
-    🟪 PUT     posts/:username/:timestamp  # Edit a specific post    
-    🟪 GET     posts/:username/:timestamp  # Get a specific post     
-    🟪 DELETE  posts/:username/:timestamp  # Delete a specific post  
-
-
-### `POST /posts/:username`
-
-- **Request:** create a new post, the post message must be added to the request body
-
-      { content: "Lorem ipsum..." }
-
-- **Response:** the response body will contain the created item:
-
-      {
-        "post": {
-          "username": "testuser",
-          "unixtime": 1667654321,
-          "content": "Lorem ipsum..."
-        }
-      }
-
-  The Location header will point to the created post `/posts/testuser/1667654321`
-
-  The possible response statuses are: 500, 201
+    ✅ POST    posts/:username             # Creating a new Post      
+    ✅ GET     posts/:username             # Getting an user's Timeline     
+    🟪 GET     posts/:username/:timestamp  # Getting a Post     
+    🟪 PUT     posts/:username/:timestamp  # Editing a Post    
+    🟪 DELETE  posts/:username/:timestamp  # Deleting a Post 
 
 
-### `GET /posts/:username`
+- ### Creating a new Post
 
-- **Request:** get all posts from a specific user (timeline)
+  - **Request:** `POST /posts/:username`
+  
+    The post message must be added to the request body
 
-- **Response:** the response body will contain the user posts in reverse-chronological order and the post count:
+        { content: "Lorem ipsum..." }
 
-      {
-        "total": 2,
-        "posts": [
-          {
+  - **Response:** `500, 201` the response body will contain the created item:
+
+        {
+          "post": {
             "username": "testuser",
             "unixtime": 1667654321,
             "content": "Lorem ipsum..."
-          },
-          {
-            "username": "testuser",
-            "unixtime": 1667654322,
-            "content": "This is my second post"
           }
-        ]
-      }
+        }
 
-  The **Location** header will point to the created post `/posts/testuser/1667654321`
+    The Location header will point to the created post `/posts/testuser/1667654321`
 
-  The possible response statuses: 500, 404, 200
+- ### Getting all Posts by one user (Timeline)
 
+  - **Request:** `GET /posts/:username` 
 
-### `GET posts/:username/:timestamp`
+  - **Response:** `500, 404, 200` the response body will contain the user posts in reverse-chronological order and the post count:
 
-- **Request:** get a specific post by providing username and timestamp
+        {
+          "total": 2,
+          "posts": [
+            {
+              "username": "testuser",
+              "unixtime": 1667654321,
+              "content": "Lorem ipsum..."
+            },
+            {
+              "username": "testuser",
+              "unixtime": 1667654322,
+              "content": "This is my second post"
+            }
+          ]
+        }
 
-- **Response:** The response body will contain the requested post
+    The **Location** header will point to the created post `/posts/testuser/1667654321`
 
-  The possible response statuses are: 500, 404, 200
+- ### Getting a Post
 
+  - **Request:** `GET posts/:username/:timestamp`
 
-### `PUT posts/:username/:timestamp`
+  - **Response:** `500, 404, 200` the response body will contain the requested post
 
-- **Request:** edit a post by providing username and timestamp
+- ### Editing a Post
 
-- **Response:** The response body will contain the modified post
+  - **Request:** `PUT posts/:username/:timestamp`
 
-  The **Location** header will point to the modified post
+  - **Response:** `500, 200` the response body will contain the modified post
 
-  The possible response statuses: 500, 200
+    The **Location** header will point to the modified post
 
+- ### Deleting a Post
 
-### `DELETE posts/:username/:timestamp`
+  - **Request:** `DELETE posts/:username/:timestamp`
 
-- **Request:** delete a specific post by providing username and timestamp
+  - **Response:** `500, 404, 204` the response body be empty
 
-- **Response:** The response body be empty
-
-  The possible response statuses are: 500, 404, 204
 
  
 
 
-
-
-
-
-
-## Prerequisites
-
-- Install [Serverless Framework](https://www.serverless.com/framework/docs/getting-started)
-- Create [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key)
-
-## API Endpoints
-
-```
-POST   posts/:username               body: { content: "Lorem ipsum..." }
-GET    posts/:username
-PUT    posts/:username/:timestamp    body: { content: "Dolor sit amet..." }
-GET    posts/:username/:timestamp
-DELETE posts/:username/:timestamp
-```
 
 # Design Choices
 
