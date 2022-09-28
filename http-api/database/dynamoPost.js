@@ -167,6 +167,7 @@ module.exports = class DynamoPost {
   async getAll(event) {
     const params = { // table to be scanned
       TableName: process.env.DYNAMODB_POST_TABLE,
+      ScanIndexForward: false,
     };
 
     try {
@@ -200,6 +201,7 @@ module.exports = class DynamoPost {
         ":username": event.pathParameters.username,
       },
       KeyConditionExpression: "username = :username",
+      ScanIndexForward: false,
     };
 
     try {
