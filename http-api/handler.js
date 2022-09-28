@@ -1,11 +1,11 @@
 'use strict'
-const DynamoPost = require('./database/dynamoPost')
-const dynamodb = require('./database/dynamodb');
-
 /**
  * Inject dependencies and link the endpoint to its module.
  * https://blog.codecentric.de/en/2019/02/testable-lambda/
  */
+
+const DynamoPost = require('./database/dynamoPost')
+const dynamodb = require('./database/dynamodb');
 
 const postWrapper = new DynamoPost(dynamodb.documentClient);
 

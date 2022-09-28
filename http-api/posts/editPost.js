@@ -2,7 +2,11 @@
 
 const response = require('../response');
 
-
+/**
+ * Responds to a request for modifying a post:
+ * - Possible statuses: 500, 200
+ * In case of success the Location header will point to the edited post
+ */
 module.exports = deps => async (event) => {
 
   const result = await deps.db.edit(event);

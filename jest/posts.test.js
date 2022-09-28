@@ -28,16 +28,15 @@ const DB_RESULT  = { post: { username: "u", unixtime: 10, content: "c" }};
 
 // A mock result of getting multiple posts from the database
 const DB_RESULTS = { total: 2,
-                      posts: [ { username: "u1", unixtime: 11, content: "c1" },
-                               { username: "u2", unixtime: 12, content: "c2" }, ], };
+                     posts: [ { username: "u1", unixtime: 11, content: "c1" },
+                              { username: "u2", unixtime: 12, content: "c2" }, ], };
 
 // The body of the response should match what is returned from the database
-const EXP_POST_BODY = DB_RESULT;
+const EXP_POST_BODY  = DB_RESULT;
 const EXP_POSTS_BODY = DB_RESULTS;
 
 // The expected location header for a DB_RESULT
 const EXP_LOCATION = { "Location": "/posts/u/10" };
-
 
 /**
  * Methods that should return 500 in case of null result from db
@@ -61,7 +60,6 @@ describe("status code if result is null", () => {
     }
   ) });
 
-
 /**
  * Methods that should return 404 in case of empty object from db
  */
@@ -82,7 +80,6 @@ describe("status code if result is empty", () => {
     }
   );
 });
-
 
 /**
  * Methods that should return a success (20x) code
@@ -107,7 +104,6 @@ describe("status code if success", () => {
   );
 });
 
-
 /**
  * Methods that should return some body on success
  */
@@ -130,7 +126,6 @@ describe("correct body if success", () => {
     }
   );
 });
-
 
 /**
  * Methods that should a Location header when a resource is created

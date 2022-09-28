@@ -2,7 +2,10 @@
 
 const response = require('../response');
 
-
+/**
+ * Responds to a request for getting all posts:
+ * - Possible response statuses: 500, 404, 200
+ */
 module.exports = deps => async (event) => {
 
   const result = await deps.db.getAll(event);

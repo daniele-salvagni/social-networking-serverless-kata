@@ -1,22 +1,37 @@
 'use strict'
+/**
+ * This class is a wrapper that hides DynamoDB-specific logic and methods,
+ * for getting Posts data. This way it will be easy to switch to a
+ * different database by simply creating a new wrapper.
+ * 
+ * With the AWS SDK, it should be assumed that any operation that returns
+ * without throwing an exception was successful.In case of exceptions
+ * all methods will return null to indicate an internal error.
+ */
 
-
-class DynamoPost {
-
+module.exports = class DynamoPost {
+  /**
+   * Constructor that accepts a DynamoDB.DocumentClient instance.
+   * With this separation it will be easy to switch between cloud/local.
+   * @param AWS.DynamoDB.DocumentClient dynamodb 
+   */
   constructor(dynamodb) {
     this.db = dynamodb;
   }
 
   /**
    * Creates a new post in DynamoDB, returns the created object.
+   * @param APIGatewayProxyEvent event
    */
   async create(event) {
     const body = JSON.parse(event.body);
-    const unixTime = getUnixTime();
 
-    const params = {
+    // The server should be respondible for getting the current time
+    // when creating a new Post, not the client
+    const unixTime = Math.floor(new Date().getTime() / 1000);
+
+    const params = { // new item to be created
       TableName: process.env.DYNAMODB_POST_TABLE,
-  
       Item: {
         username: event.pathParameters.username,
         unixtime: unixTime,
@@ -25,8 +40,7 @@ class DynamoPost {
     };
 
     try {
-      // DynamoDB PutItem
-      await this.db.put(params).promise();
+      await this.db.put(params).promise(); // DynamoDB PutItem
       process.env.IS_OFFLINE && console.log("PutItem success");
       return { // DyanmoDB doen NOT return a response for new items, so we build one
         post: {
@@ -43,21 +57,21 @@ class DynamoPost {
 
   /**
    * Deletes a post from DynamoDB, returns the deleted object:
+   * @param APIGatewayProxyEvent event
    */
   async delete(event) {
-    const params = {
+    const params = { // composite Key of the item to be deleted
       TableName: process.env.DYNAMODB_POST_TABLE,
       Key: {
         username: event.pathParameters.username,
         unixtime: parseInt(event.pathParameters.unixtime),
       },
-      // The content of the old item is returned
+      // The content of the old item is returned (but not used)
       ReturnValues: 'ALL_OLD'
     };
 
     try {
-      // DynamoDB DeleteItem
-      const result = await this.db.delete(params).promise();
+      const result = await this.db.delete(params).promise(); // DynamoDB DeleteItem
       if (!result.Attributes) return {};
 
       process.env.IS_OFFLINE && console.log("DeleteItem success");
@@ -76,9 +90,11 @@ class DynamoPost {
 
 /**
    * Updates a post from DynamoDB, returns the updated object.
-   * If the resource does not exist, it gets created.
+   * If the resource does not exist, it gets created, this has been
+   * allowed mainly for making this Kata easier to play with.
+   * @param APIGatewayProxyEvent event
    */
-  async edit(event) {
+  async edit(event) { // composite key and body to be modified
     const body = JSON.parse(event.body);
 
     const params = {
@@ -91,7 +107,6 @@ class DynamoPost {
           ":c": body.content,
       },
       UpdateExpression: "set content = :c",
-  
       // Returns all of the attributes of the updated item
       ReturnValues: 'ALL_NEW'
     };
@@ -116,9 +131,10 @@ class DynamoPost {
   
   /**
    * Gets and returns a post from DynamoDB.
+   * @param APIGatewayProxyEvent event
    */
   async get(event) {
-    const params = {
+    const params = { // composite key of the item to be retrieved
       TableName: process.env.DYNAMODB_POST_TABLE,
       Key: {
         username: event.pathParameters.username,
@@ -127,8 +143,7 @@ class DynamoPost {
     };
 
     try {
-      // DynamoDB GetItem
-      const result = await this.db.get(params).promise();
+      const result = await this.db.get(params).promise(); // DynamoDB GetItem
       if (!result.Item) return {};
 
       process.env.IS_OFFLINE && console.log("GetItem success");
@@ -147,15 +162,15 @@ class DynamoPost {
 
   /**
    * Gets and returns all posts from DynamoDB.
+   * @param APIGatewayProxyEvent event
    */
   async getAll(event) {
-    const params = {
+    const params = { // table to be scanned
       TableName: process.env.DYNAMODB_POST_TABLE,
     };
 
     try {
-      // DynamoDB Scan
-      const result = await this.db.scan(params).promise();
+      const result = await this.db.scan(params).promise(); // DynamoDB Scan
       if (!result.Count === 0) return {};
 
       process.env.IS_OFFLINE && console.log("Scan success");
@@ -175,9 +190,10 @@ class DynamoPost {
 
   /**
    * Gets and returns an user's timeline from DynamoDB.
+   * @param APIGatewayProxyEvent event
    */
   async getAllUser(event) {
-    const params = {
+    const params = { // partition key equals to username
       TableName: process.env.DYNAMODB_POST_TABLE,
   
       ExpressionAttributeValues: {
@@ -187,8 +203,7 @@ class DynamoPost {
     };
 
     try {
-      // DynamoDB Query
-      const result = await this.db.query(params).promise();
+      const result = await this.db.query(params).promise(); // DynamoDB Query
       if (!result.Count === 0) return {};
 
       process.env.IS_OFFLINE && console.log("Query success");
@@ -206,10 +221,3 @@ class DynamoPost {
     }
   }
 }
-
-
-function getUnixTime() {
-  return Math.floor(new Date().getTime() / 1000);
-}
-
-module.exports = DynamoPost;
