@@ -1,6 +1,8 @@
 # Social Networking Serverless Kata
 
-This is my solution to the [Social Networking Serverless Kata](https://github.com/claranet-ch/social-networking-serverless-kata).
+This is my solution to the following Kata: [Social Networking Serverless Kata](https://github.com/claranet-ch/social-networking-serverless-kata)
+
+![serverless-demo](https://user-images.githubusercontent.com/6751621/192869355-d0920bdb-305e-40de-a152-b92450c79fe1.gif)
 
 ## 🧪 Tech stack
 
@@ -50,6 +52,7 @@ Install the [Serverless Framework](https://www.serverless.com/framework/docs/get
 
 > The endpoints that this Kata required to implement are marked with ✅, extras with 🟪
 
+    🟪 GET     posts                       # Getting all Posts
     ✅ POST    posts/:username             # Creating a new Post      
     ✅ GET     posts/:username             # Getting an user's Timeline     
     🟪 GET     posts/:username/:timestamp  # Getting a Post     
@@ -121,7 +124,11 @@ Install the [Serverless Framework](https://www.serverless.com/framework/docs/get
 
   - **Response:** `500, 404, 204` the response body be empty
 
+- ### Getting all Posts
 
+  - **Request:** `GET posts`
+
+  - **Response:** `500, 404, 200` the response body will contain all posts and the post count
  
 
 
