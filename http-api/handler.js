@@ -1,5 +1,5 @@
 'use strict'
-const DynamodbPostWrapper = require('./database/DynamoPostWrapper')
+const DynamoPost = require('./database/dynamoPost')
 const dynamodb = require('./database/dynamodb');
 
 /**
@@ -7,7 +7,7 @@ const dynamodb = require('./database/dynamodb');
  * https://blog.codecentric.de/en/2019/02/testable-lambda/
  */
 
-const postWrapper = new DynamodbPostWrapper(dynamodb.documentClient);
+const postWrapper = new DynamoPost(dynamodb.documentClient);
 
 module.exports.createPost = require('./posts/createPost')({
   db: postWrapper,

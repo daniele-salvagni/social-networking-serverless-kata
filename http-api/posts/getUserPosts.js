@@ -5,7 +5,7 @@ const response = require('../response');
 
 module.exports = deps => async (event) => {
 
-  const result = await deps.db.queryUser(event);
+  const result = await deps.db.getAllFromUser(event);
 
   if (!result) return response.create(500);
 

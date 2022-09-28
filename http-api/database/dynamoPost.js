@@ -1,6 +1,7 @@
 'use strict'
 
-class DynamoPostWrapper {
+
+class DynamoPost {
 
   constructor(dynamodb) {
     this.db = dynamodb;
@@ -112,35 +113,7 @@ class DynamoPostWrapper {
       return null;
     }
   }
-
-  /**
-   * Gets and returns all posts from DynamoDB.
-   */
-  async getAll(event) {
-    const params = {
-      TableName: process.env.DYNAMODB_POST_TABLE,
-    };
-
-    try {
-      // DynamoDB Scan
-      const result = await this.db.scan(params).promise();
-      if (!result.Count === 0) return {};
-
-      process.env.IS_OFFLINE && console.log("Scan success");
-      return {
-        total: result.Count,
-        posts: result.Items.map((post => ({
-          username: post.username,
-          unixtime: post.unixtime,
-          content: post.content,
-        }))),
-      }
-    } catch (error) {
-      console.warn("Scan error =", error);
-      return null;
-    }
-  }
-
+  
   /**
    * Gets and returns a post from DynamoDB.
    */
@@ -173,9 +146,37 @@ class DynamoPostWrapper {
   }
 
   /**
+   * Gets and returns all posts from DynamoDB.
+   */
+  async getAll(event) {
+    const params = {
+      TableName: process.env.DYNAMODB_POST_TABLE,
+    };
+
+    try {
+      // DynamoDB Scan
+      const result = await this.db.scan(params).promise();
+      if (!result.Count === 0) return {};
+
+      process.env.IS_OFFLINE && console.log("Scan success");
+      return {
+        total: result.Count,
+        posts: result.Items.map((post => ({
+          username: post.username,
+          unixtime: post.unixtime,
+          content: post.content,
+        }))),
+      }
+    } catch (error) {
+      console.warn("Scan error =", error);
+      return null;
+    }
+  }
+
+  /**
    * Gets and returns an user's timeline from DynamoDB.
    */
-  async queryUser(event) {
+  async getAllFromUser(event) {
     const params = {
       TableName: process.env.DYNAMODB_POST_TABLE,
   
@@ -211,4 +212,4 @@ function getUnixTime() {
   return Math.floor(new Date().getTime() / 1000);
 }
 
-module.exports = DynamoPostWrapper;
+module.exports = DynamoPost;

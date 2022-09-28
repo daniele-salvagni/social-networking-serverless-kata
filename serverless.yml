@@ -4,11 +4,15 @@ app: social-networking-serverless-kata
 service: social-networking-serverless-kata
 frameworkVersion: '3'
 
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
 provider:
   name: aws
-  region: eu-west-3
   runtime: nodejs14.x
   stage: dev
+  region: eu-west-3
   iam:
     role:
       statements:
@@ -28,14 +32,16 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  # DynamoDB Local
   dynamodb:
     stages:
       - dev
     start:
-      #docker: true
+      host: 'localhost'
+      noStart: true
+      migrate: true
       port: 8000
       inMemory: true
-      migrate: true
       #seed: true
     seed:
       domain:
@@ -45,9 +51,6 @@ custom:
 
 
 
-plugins:
-  - serverless-dynamodb-local
-  - serverless-offline
 
 functions: ${file(http-api/gateway.yml)}
 

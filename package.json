@@ -3,12 +3,22 @@
   "version": "1.0.0",
   "description": "A serverless social networking application similar to Twitter",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "",
+    "predev": "serverless dynamodb start --migrate",
+    "dev": "serverless offline start",
+    "docker-dev": "cross-env NODE_ENV=development serverless offline start --host 0.0.0.0",
+    "test": "LOCAL=true jest",
+    "pretest:int": "docker-compose up -d dynamodb.testing",
+    "pretest:int:watch": "docker-compose up -d dynamodb.testing",
+    "posttest:int": "docker-compose stop dynamodb.testing",
+    "posttest:int:watch": "docker-compose stop dynamodb.testing",
+    "test:int": "LOCAL=true jest"
   },
   "author": "Daniele Salvagni <dan@salvagni.io>",
   "license": "MIT",
   "devDependencies": {
     "aws-sdk": "^2.1224.0",
+    "jest": "^29.1.1",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^10.3.0"
   }
