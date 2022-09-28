@@ -1,0 +1,5 @@
+node_modules/
+.dynamodb/
+.history/
+.webpack/
+.vscode/
