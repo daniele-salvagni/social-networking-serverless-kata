@@ -176,7 +176,7 @@ class DynamoPost {
   /**
    * Gets and returns an user's timeline from DynamoDB.
    */
-  async getAllFromUser(event) {
+  async getAllUser(event) {
     const params = {
       TableName: process.env.DYNAMODB_POST_TABLE,
   

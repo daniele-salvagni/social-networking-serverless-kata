@@ -34,7 +34,7 @@ getAllPosts: # GET posts
        method: GET
 
 getUserPosts: # GET posts/:username
-  handler: http-api/handler.getUserPosts
+  handler: http-api/handler.getAllUserPosts
   events:
     - httpApi:
         path: /posts/{username}

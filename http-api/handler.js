@@ -29,6 +29,6 @@ module.exports.getAllPosts = require('./posts/getAllPosts')({
   db: postWrapper,
 });
 
-module.exports.getUserPosts = require('./posts/getUserPosts')({
+module.exports.getAllUserPosts = require('./posts/getAllUserPosts')({
   db: postWrapper,
 });
