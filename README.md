@@ -4,7 +4,12 @@ This is my solution to the following Kata: [Social Networking Serverless Kata](h
 
 ![serverless-demo](https://user-images.githubusercontent.com/6751621/192869355-d0920bdb-305e-40de-a152-b92450c79fe1.gif)
 
+> A quick Postman demo showing two posts being created on a user's profile and then retrieving them.
+
+
 ## 🧪 Tech stack
+
+This project has been setup for having local staging and testing environments as well as a cloud production environment. Parts of the code that had some logic have been separated from dependencies and unit tested. Integration tests are in place to ensure that everyting plays well togeter.
 
 - [Amazon Web Services](https://aws.amazon.com/) as the Cloud provider
 - [Serverless](https://www.serverless.com/) for development and deployment
@@ -129,58 +134,57 @@ Install the [Serverless Framework](https://www.serverless.com/framework/docs/get
   - **Request:** `GET posts`
 
   - **Response:** `500, 404, 200` the response body will contain all posts and the post count
- 
-
-
-
-# Design Choices
-
-## Data Modeling
-
-There are some entities for which it is worth thinking about, but they are not in the scope of this kata, they will be ~~**striked out**~~.
-
-### Entities
-
-- ~~A **User** represents someone that has signed up to the application.~~
-- A **Post** represent a user writing something on his own timeline.
-
-### Access patterns
-
-- ~~**Users**: It should be possible to *Create*, *Read* and *Delete* users. Users must have an unique username.~~
-  
-- **Posts**: It should be possible to *Create*, *Read* and *Delete* posts. A post needs an username and some text content to be created. Some sort of id will be needed to read or delete a single post.
-
-- **Posts of User**: It should be possible to get all posts from a single user in reverse-chronological order.
-
-### DynamoDB
-
-This project will use DynamoDB. It is fine for the requirements of this exercise but it could be worth considering other options as the requiremests get expanded, more on this later.
-
-```
-PostsTable
-
-Entity  username (PK)    timestamp (SK)    content
-Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
-```
-
-The username and timestamp, taken together, could be enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
 
 ---
 
-## Thoughts on expanding this project
+## 📐 Design Choices
 
-As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)
+There are a couple entities for which it is worth thinking about before solving this Kata:
 
-At the moment we just have a collection of posts. If we wanted to add information about the user in a single DynamoDB table it could look something like this:
+- A **User** represents someone that has signed up to the application.
+- A **Post** represent a user writing something on his own timeline.
 
-```
-MainTable
+ For simplicity, as this Kata only requires to create and read posts, Users entities with the relative attributes (like full name, email, etc.) will not be implemented.
 
-Entity    Partition Key       Sort Key
-User      USER#<USERNAME>     METADATA#<USERNAME>
-Post      USER#<USERNAME>     POST#<USERNAME>#<TIMESTAMP>
-```
 
-Having the same Partition Key `USER#<USERNAME>` for both Users and Posts will allow to retrieve both the user's profile and posts in a **single transaction**. We would query for the Partition Key to be equal to a specific `USER#<USERNAME>`, and the Sort Key to be between `METADATA#<USERNAME>` and `POST$` (`$` comes just after `#` in ASCII).
+### Access patterns
 
-As even more relations get implemented (friends, comments, likes, friend feeds and so on) a graph database could be more suitable for this kind of application.
+The following access patterns will be implemented, the ~~striked~~ ones will be ignored:
+
+- ~~**Users:** It should be possible to *Create*, *Read* and *Delete* users. Users must have an unique username.~~
+  
+- **Posts:** It should be possible to *Create*, *Read* and *Delete* posts. A post needs an username and some text content to be created. Some sort of id will be needed to read or delete a single post.
+
+- **User Timeline:** It should be possible to get all posts from a single user in reverse-chronological order.
+
+- **All Posts:** It should be possible to get all posts.
+
+### DynamoDB
+
+This project will use DynamoDB. It is perfectly fine for the requirements of this Kata but it could be worth considering other options as the requiremests get more complex.
+
+    PostsTable
+
+    Entity  username (PK)    timestamp (SK)    content
+    Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
+
+
+The username and timestamp, together, could be enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
+
+
+> #### Thoughts for expanding this project ⌛
+>
+> As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)  
+> By having all data in a single table and with some denormalization, typical for NoSQL databases, it would be possible to get related data in a single query.
+>
+> At the moment we just have a collection of posts. If we wanted to add information about the user it could look something like this:
+> 
+>     MainTable
+> 
+>     Entity    Partition Key       Sort Key
+>     User      USER#<USERNAME>     METADATA#<USERNAME>
+>     Post      USER#<USERNAME>     POST#<USERNAME>#<TIMESTAMP>
+> 
+> Having the same Partition Key `USER#<USERNAME>` for both Users and Posts will allow to retrieve both the user's profile and posts in a **single transaction**. We would query for the Partition Key to be equal to a specific `USER#<USERNAME>`, and the Sort Key to be between `METADATA#<USERNAME>` and `POST$` (`$` comes just after `#` in ASCII).
+>
+> As even more relations get implemented (friends, comments, likes, friend feeds and so on) it might be worth to consider adding a graph database in front DynamoDB or instead of it.
