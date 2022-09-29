@@ -89,6 +89,9 @@ Or set them permanently
 
       serverless remove
 
+- ### 📦 Packaging
+
+      serverless package
 
 ## 📫 API Endpoints
 
