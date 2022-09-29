@@ -1,4 +1,3 @@
-console: true
 org: danielesalvagni
 app: social-networking-serverless-kata
 service: social-networking-serverless-kata
