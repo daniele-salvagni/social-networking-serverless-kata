@@ -1,6 +1,5 @@
 postsTable:
   Type: AWS::DynamoDB::Table
-  DeletionPolicy: Retain
   Properties:
     TableName: ${self:service}-postsTable-${sls:stage}
     AttributeDefinitions:
