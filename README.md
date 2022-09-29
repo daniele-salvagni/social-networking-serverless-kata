@@ -42,7 +42,19 @@ As a prerequisite, install the [Serverless Framework](https://www.serverless.com
 
     npm install -g serverless && npm install
 
-- ### 🪛 Dev Staging environment
+Create a new [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key) and export them as enviroment variables:
+
+    export AWS_ACCESS_KEY_ID=<your-key-here>
+    export AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
+
+Or set them permanently
+
+    serverless config credentials \
+      --provider aws \
+      --key AKIAIOSFODNN7EXAMPLE \
+      --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+- ### 🪛 Dev environment
 
   The following command will start and emulate everything locally
 
@@ -64,12 +76,7 @@ As a prerequisite, install the [Serverless Framework](https://www.serverless.com
 
   If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory.
 
-- ### ☁️ Prod Cloud deployment
-
-  Create a new [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key) and export them as enviroment variables:
-
-      export AWS_ACCESS_KEY_ID=<your-key-here>
-      export AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
+- ### ☁️ Cloud deployment
 
   Deploy to AWS
 
@@ -218,4 +225,5 @@ The username and timestamp, together, could be enough to uniquely identify a sin
 >
 > - Needs pagination for getting many items
 > - There is no authentication
+> - Typescript would allow for more robust code
 > - 
