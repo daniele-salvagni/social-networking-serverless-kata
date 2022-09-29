@@ -7,9 +7,9 @@
     "predev": "serverless dynamodb start --migrate",
     "dev": "serverless offline start",
     "test": "IS_LOCAL=true jest --testRegex '\\.test\\.js'",
-    "pretest:int": "docker-compose up -d dynamodb.testing && serverless dynamodb start --migrate && serverless offline",
+    "pretest:int": "docker-compose up -d dynamodb.testing && serverless dynamodb start --migrate && bash offlineStart.sh",
     "test:int": "IS_LOCAL=true jest --testRegex '\\.int\\.js'",
-    "posttest:int": "docker-compose stop dynamodb.testing"
+    "posttest:int": "docker-compose stop dynamodb.testing && bash offlineStop.sh"
   },
   "author": "Daniele Salvagni <dan@salvagni.io>",
   "license": "MIT",

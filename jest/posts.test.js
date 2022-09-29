@@ -2,6 +2,8 @@
 /**
  * The following unit-tests are testing if the handler will return the correct
  * http responses depending on what is returned from the database.
+ * 
+ * jest-each has been used to reuse the same tests on different methods.
  */
 
 // Mock the database wrapper
