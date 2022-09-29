@@ -2,7 +2,7 @@
 # --stage option OR default provider stage OR dev
 stage: ${sls:stage}
 
-s3BackupBucket: ${self:service}-dynamoBackup-${sls:stage}
+s3BackupBucket: ${self:service}-dynamobackup-${sls:stage}
 
 # serverless-dynamodb-local default configuration
 dynamodb:
@@ -22,4 +22,4 @@ dynamodb:
 serverless-s3-cleaner:
   prompt: false
   buckets:
-    - ${self:service}-dynamoBackup-${sls:stage}
+    - ${self:service}-dynamobackup-${sls:stage}
