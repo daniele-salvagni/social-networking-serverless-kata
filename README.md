@@ -9,14 +9,14 @@ This is my solution to the following Kata: [Social Networking Serverless Kata](h
 
 ## 🧪 Tech stack
 
-This project has been setup for having local staging and testing environments as well as a cloud production environment. Parts of the code that had some logic have been separated from dependencies and unit tested. Integration tests are in place to ensure that everyting plays well togeter.
+This project has been setup for having local dev and testing environments as well as a cloud environment. Parts of the code that had some logic have been separated from dependencies and unit tested. A couple integration tests are in place to ensure that everyting plays well togeter.
 
 - [Amazon Web Services](https://aws.amazon.com/) as the Cloud provider
 - [Serverless](https://www.serverless.com/) for development and deployment
   - [serverless-dynamodb-local](https://www.serverless.com/plugins/serverless-dynamodb-local): used only for the `--migrate` and `--seed` options
   - [serverless-offline](https://www.serverless.com/plugins/serverless-offline): to emulate AWS λ and API Gateway locally
 - [Docker](https://www.docker.com/) for providing the following containers:
-  - `dynamodb.local` a local DynamoDB instance for dev staging
+  - `dynamodb.local` a local DynamoDB instance for dev testing
   - `dynamodb.test` a local DynamoDB instance for running integration tests
   - `dynamodb.admin` a DynamoDB GUI control panel
 - [Jest](https://jestjs.io/) for running unit and integration tests
@@ -60,9 +60,12 @@ Or set them permanently
 
       npm run dev
 
-  The API Endpoints will be available at http://localhost:3000 and it will be possible to inspect the DynamoDB local database at http://localhost:8001.
+  It will then be accessible:
+
+  - http://localhost:3000 - API Endpoints
+  - http://localhost:8001 - Admin panel to inspect the local DynamoDB
   
-  DynamoDB will store the data temporarly in-memory and will be populated with the same boilerplate data at each start.
+  DynamoDB will store the data temporarly in-memory until the Docker container is restarted.
 
 - ### 🔍 Testing
 
@@ -74,7 +77,7 @@ Or set them permanently
 
       npm run test:int
 
-  If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory.
+  If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. This is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
 
 - ### ☁️ Cloud deployment
 
@@ -195,14 +198,14 @@ The following access patterns will be implemented, the ~~striked~~ ones will be 
 
 ### DynamoDB
 
-This project will use DynamoDB. It is perfectly fine for the requirements of this Kata but it could be worth considering other options as the requiremests get more complex.
+This project will use DynamoDB. It is perfectly fine for the requirements of this Kata but it could be worth considering other options as the requiremests get more complex. Based on the required access patterns the table should look something like this:
 
     PostsTable
 
     Entity  username (PK)    timestamp (SK)    content
     Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
 
-The username and timestamp, together, could be enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
+The username and timestamp, together, are enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
 
 > #### Thoughts for expanding this project ⌛
 >
@@ -226,4 +229,3 @@ The username and timestamp, together, could be enough to uniquely identify a sin
 > - Needs pagination for getting many items
 > - There is no authentication
 > - Typescript would allow for more robust code
-> - 
