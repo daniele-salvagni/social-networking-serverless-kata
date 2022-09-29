@@ -8,17 +8,17 @@ const fetch = require('node-fetch-commonjs');
 
 const BASE_URL = "http://localhost:3000";
 
-const USER = "testUser";
-const BODY  = { content: "Lorem ipsum" };
+const TEST_USER = "testUser";
+const TEST_BODY  = { content: "Lorem ipsum" };
 
-describe("create a post, get it using the location header", () => {
+describe("create a post, then get it using the location header", () => {
 
-  test("should return the created content", async () => {
+  test("should get back the created message", async () => {
 
     // Create a new post
-    const createResponse = await fetch(`${BASE_URL}/posts/${USER}`, {
+    const createResponse = await fetch(`${BASE_URL}/posts/${TEST_USER}`, {
       method: "post",
-      body: JSON.stringify(BODY),
+      body: JSON.stringify(TEST_BODY),
       headers: {"Content-Type": "application/json"}
     });
   
@@ -34,7 +34,7 @@ describe("create a post, get it using the location header", () => {
     const data = await getResponse.json();
     const returnedContent = data.post.content;
 
-    expect(returnedContent).toBe(BODY.content); // "Lorem ipsum"
+    expect(returnedContent).toBe(TEST_BODY.content); // "Lorem ipsum"
 
   });
 
