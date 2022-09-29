@@ -1,5 +1,5 @@
 # Starts `serverless offline` in background and
-# waints for the server to be ready
+# waits for the server to be ready
 
 TMPFILE=/tmp/offline$$.log
 if [ -f .offline.pid ]; then

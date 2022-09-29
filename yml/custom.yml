@@ -2,7 +2,7 @@
 # --stage option OR default provider stage OR dev
 stage: ${sls:stage}
 
-s3BackupBucket: dynamo-backup-qwerty
+s3BackupBucket: ${self:service}-dynamoBackup-${sls:stage}
 
 # serverless-dynamodb-local default configuration
 dynamodb:

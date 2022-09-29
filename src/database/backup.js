@@ -8,13 +8,12 @@ const Backup = require('dynamodb-backup-restore').Backup;
 exports.handler = function (event, context, callback) {
 
 	const config = {
-		// TODO: Use variables and fix names
-		S3Bucket:     'dynamo-backup-qwerty',                   /* required */
-		S3Region:     'eu-west-3',                     /* required */
-		DbTable:      process.env.DYNAMODB_POST_TABLE, /* required */
-		DbRegion:     'eu-west-3'                      /* required */
+		S3Bucket:     process.env.BACKUP_S3_BUCKET,     /* required */
+		S3Region:     process.env.REGION,               /* required */
+		DbTable:      process.env.DYNAMODB_POST_TABLE,  /* required */
+		DbRegion:     process.env.REGION,               /* required */
 	};
 	const backup = new Backup(config);
 	backup.full();
-	
+
 };

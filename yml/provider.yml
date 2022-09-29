@@ -30,9 +30,10 @@ iam:
           - 's3:GetObjectVersion'
           - 's3:PutObject'
         Resource:
-          - 'arn:aws:s3:::dynamo-backup-qwerty/*'
+          - 'arn:aws:s3:::${self:service}-dynamoBackup-${sls:stage}/*'
 
 environment: # Environment variables to be used in JS (process.env.)
   DYNAMODB_POST_TABLE: ${self:service}-postsTable-${sls:stage}
   LOCAL_DDB_PORT: 8000
   BACKUP_S3_BUCKET: ${self:service}-dynamoBackup-${sls:stage}
+  REGION: eu-west-3
