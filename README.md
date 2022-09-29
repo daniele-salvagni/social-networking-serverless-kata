@@ -56,11 +56,11 @@ Or set them permanently
 
 - ### 🪛 Dev environment
 
-  The following command will start and emulate everything locally (**Docker required**)
+  Start and emulate everything locally (**Docker required**)
 
       npm run dev
 
-  It will then be accessible:
+  The following will then be accessible:
 
   - http://localhost:3000 - API Endpoints
   - http://localhost:8001 - Admin panel to inspect the local DynamoDB
