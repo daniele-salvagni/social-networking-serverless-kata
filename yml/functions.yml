@@ -45,8 +45,7 @@ getUserPosts: # GET posts/:username
 s3backup:
   handler: src/database/backup.handler
   events:
-    #- schedule: cron(0 0 0 ? * * *)
-    - schedule: rate(2 hours)
+    - schedule: rate(24 hours)
   package:
     patterns:
       - './node_modules/**'
