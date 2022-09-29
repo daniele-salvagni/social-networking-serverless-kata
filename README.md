@@ -89,6 +89,8 @@ Or set them permanently
 
       serverless remove
 
+  > S3 Buckets used for backups must be removed manually as the name is randomly generated. This is required for the app to be deployable on multiple accounts as the Bucket name must be unique globally.
+
 - ### 📦 Packaging
 
       serverless package
