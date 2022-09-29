@@ -1,8 +1,5 @@
 'use strict';
 
-// var DynamoBackup = require('dynamo-backup-to-s3');
-// var moment = require('moment');
-
 const Backup = require('dynamodb-backup-restore').Backup;
 
 exports.handler = function (event, context, callback) {

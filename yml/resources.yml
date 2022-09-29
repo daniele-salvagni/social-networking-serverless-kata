@@ -20,7 +20,7 @@ postsTable:
 s3BackupBucket:
   Type: AWS::S3::Bucket
   Properties:
-    BucketName: ${self:service}-dynamobackup-${sls:stage}
+    BucketName: ${sls:instanceId}-dynamobackup-${sls:stage}
     CorsConfiguration:
       CorsRules:
         - AllowedOrigins:

@@ -4,7 +4,7 @@
  * - a Cloud AWS DynamoDB instance (env. variables)
  * - a Local DynamoDB instance (env. variables or defaults to http://localhost:8000)
  * 
- * The general idea and some of the code comes from this svs plugin:
+ * The general idea and some of the code comes from this sls plugin:
  * https://github.com/99x/serverless-dynamodb-client/blob/master/src/index.js
  */
 
