@@ -8,7 +8,9 @@
  * https://github.com/99x/serverless-dynamodb-client/blob/master/src/index.js
  */
 
-const AWS = require('aws-sdk');
+// const AWS = require('aws-sdk');
+// we don't need the whole AWS SDK
+const dynamodb = require('aws-sdk/clients/dynamodb');
 
 const HOST = process.env.LOCAL_DDB_HOST || 'localhost';
 const PORT = process.env.LOCAL_DDB_PORT || 8000;
@@ -26,5 +28,5 @@ const OFFLINE_OPTIONS = {
 const IS_OFFLINE = process.env.IS_OFFLINE || process.env.IS_LOCAL;
 
 exports.documentClient = IS_OFFLINE
-  ? new AWS.DynamoDB.DocumentClient(OFFLINE_OPTIONS)
-  : new AWS.DynamoDB.DocumentClient();
+  ? new dynamodb.DocumentClient(OFFLINE_OPTIONS)
+  : new dynamodb.DocumentClient();

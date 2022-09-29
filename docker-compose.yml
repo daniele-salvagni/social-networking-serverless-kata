@@ -1,6 +1,15 @@
 version: '3.8'
 services:
 
+  dynamodb.testing:
+    image: amazon/dynamodb-local
+    ports:
+      - "8000:8000"
+    command: -jar DynamoDBLocal.jar -sharedDb -inMemory
+    working_dir: /home/dynamodblocal
+    expose:
+      - "8000"
+
   dynamodb.local:
     image: amazon/dynamodb-local
     ports:
@@ -18,6 +27,7 @@ services:
     ports:
       - 8001:8001
     environment:
+      # CAREFUL, don't use localhost but the container name!
       DYNAMO_ENDPOINT: "http://dynamodb.local:8000"
       AWS_REGION: "eu-west-3"
       AWS_ACCESS_KEY_ID: local

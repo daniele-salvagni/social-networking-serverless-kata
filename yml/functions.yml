@@ -1,0 +1,52 @@
+# Posts Gateway API functions
+createPost: # POST posts/:username
+  handler: src/handler.createPost
+  events:
+    - httpApi:
+        path: /posts/{username}
+        method: POST
+
+deletePost: # DELETE posts/:username/:unixtime
+ handler: src/handler.deletePost
+ events:
+   - httpApi:
+       path: /posts/{username}/{unixtime}
+       method: DELETE
+
+editPost: # PUT posts/:username/:unixtime
+ handler: src/handler.editPost
+ events:
+   - httpApi:
+       path: /posts/{username}/{unixtime}
+       method: PUT
+
+getPost: # GET posts/:username/:unixtime
+  handler: src/handler.getPost
+  events:
+    - httpApi:
+        path: /posts/{username}/{unixtime}
+        method: GET
+
+getAllPosts: # GET posts
+  handler: src/handler.getAllPosts
+  events:
+    - httpApi:
+        path: /posts
+        method: GET
+
+getUserPosts: # GET posts/:username
+  handler: src/handler.getAllUserPosts
+  events:
+    - httpApi:
+        path: /posts/{username}
+        method: GET
+
+# Backup DynamoDB to S3
+s3backup:
+  handler: src/database/backup.handler
+  events:
+    #- schedule: cron(0 0 0 ? * * *)
+    - schedule: rate(2 hours)
+  package:
+    patterns:
+      - './node_modules/**'

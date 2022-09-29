@@ -8,12 +8,12 @@
 const postWrapperMock = jest.fn();
 
 // Import the functions to be tested and inject the mocked wrapper
-const createPost      = require("../http-api/posts/createPost")      ({ db: postWrapperMock });
-const deletePost      = require("../http-api/posts/deletePost")      ({ db: postWrapperMock });
-const editPost        = require("../http-api/posts/editPost")        ({ db: postWrapperMock });
-const getAllPosts     = require("../http-api/posts/getAllPosts")     ({ db: postWrapperMock });
-const getAllUserPosts = require("../http-api/posts/getAllUserPosts") ({ db: postWrapperMock });
-const getPost         = require("../http-api/posts/getPost")         ({ db: postWrapperMock });
+const createPost      = require("../src/posts/createPost")      ({ db: postWrapperMock });
+const deletePost      = require("../src/posts/deletePost")      ({ db: postWrapperMock });
+const editPost        = require("../src/posts/editPost")        ({ db: postWrapperMock });
+const getAllPosts     = require("../src/posts/getAllPosts")     ({ db: postWrapperMock });
+const getAllUserPosts = require("../src/posts/getAllUserPosts") ({ db: postWrapperMock });
+const getPost         = require("../src/posts/getPost")         ({ db: postWrapperMock });
 
 // Mock the database wrapper methods
 postWrapperMock.create     = jest.fn();
@@ -58,7 +58,8 @@ describe("status code if result is null", () => {
       const result = await testedFunc();
       expect(result).toEqual(expect.objectContaining({ statusCode: expectedCode }));
     }
-  ) });
+  )
+});
 
 /**
  * Methods that should return 404 in case of empty object from db
@@ -131,8 +132,8 @@ describe("correct body if success", () => {
  * Methods that should a Location header when a resource is created
  */
 const SUCCESS_LOCATION = [
-  [ "createPost",      EXP_LOCATION,  DB_RESULT,  createPost,      postWrapperMock.create     ],
-  [ "editPost",        EXP_LOCATION,  DB_RESULT,  editPost,        postWrapperMock.edit       ],
+  [ "createPost",      EXP_LOCATION, DB_RESULT, createPost, postWrapperMock.create ],
+  [ "editPost",        EXP_LOCATION, DB_RESULT, editPost,   postWrapperMock.edit   ],
 ];
 
 describe("correct location header if created", () => {

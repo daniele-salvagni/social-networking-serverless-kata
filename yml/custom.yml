@@ -1,0 +1,20 @@
+# ${sls:stage} is a shortcut for ${opt:stage, self:provider.stage, "dev"}
+# --stage option OR default provider stage OR dev
+stage: ${sls:stage}
+
+s3BackupBucket: dynamo-backup-qwerty
+
+# serverless-dynamodb-local default configuration
+dynamodb:
+  stages: # to use this plugin only in some stages
+    - dev
+  start:
+    port: 8000
+    noStart: true # don't start the .jar, it's already running in Docker
+    # TODO: create a seed file to populate the db, can be different for dev/test
+    # seed: true
+  seed:
+    domain:
+      sources: # sources to populate the db with `sls dynamodb start --migrate`
+        - table: ${self:service}-postsTable-${sls:stage}
+          #sources: [./offline/migrations/todo-seed.json]

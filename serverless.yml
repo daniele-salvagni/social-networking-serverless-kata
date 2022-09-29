@@ -8,57 +8,17 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
 
-provider:
-  name: aws
-  runtime: nodejs14.x
-  stage: dev
-  region: eu-west-3
-  iam:
-    role:
-      statements:
-        - Effect: 'Allow'
-          Action:
-            - 'dynamodb:PutItem'
-            - 'dynamodb:Get*'
-            - 'dynamodb:Scan*'
-            - 'dynamodb:UpdateItem'
-            - 'dynamodb:DeleteItem'
-          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-postTable-${sls:stage}
-  httpApi:
-    cors: true
-  environment: # Environment variables (process.env. in JS)
-    DYNAMODB_POST_TABLE: ${self:service}-postTable-${sls:stage}
-    LOCAL_DDB_PORT: 8000
+provider: ${file(yml/provider.yml)}
 
-custom:
-  stage: ${opt:stage, self:provider.stage}
-  # DynamoDB Local
-  dynamodb:
-    stages:
-      - dev
-    start:
-      host: 'localhost'
-      noStart: true
-      migrate: true
-      port: 8000
-      inMemory: true
-      #seed: true
-    seed:
-      domain:
-        sources:
-          - table: ${self:service}-postTable-${sls:stage}
-            #sources: [./offline/migrations/todo-seed.json]
+custom: ${file(yml/custom.yml)}
 
-
-
-
-functions: ${file(http-api/gateway.yml)}
+functions: ${file(yml/functions.yml)}
 
 resources:
-  Resources: ${file(http-api/database/posts.yml)}
+  Resources: ${file(yml/resources.yml)}
 
 package:
-  exclude:
-    - node_modules/dynamodb-localhost/**
-    - node_modules/serverless-dynamodb-local/**
-    - node_modules/serverless-offline/**
+  individually: true
+  patterns:
+    - '!./**'  # exclude everything
+    - 'src/**' # include everything inside src
