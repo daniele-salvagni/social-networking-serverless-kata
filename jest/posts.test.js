@@ -131,7 +131,7 @@ describe("correct body if success", () => {
 });
 
 /**
- * Methods that should a Location header when a resource is created
+ * Methods that should return a Location header when a resource is created
  */
 const SUCCESS_LOCATION = [
   [ "createPost",      EXP_LOCATION, DB_RESULT, createPost, postWrapperMock.create ],

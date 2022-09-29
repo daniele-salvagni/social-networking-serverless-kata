@@ -5,7 +5,7 @@
  * different database by simply creating a new wrapper.
  * 
  * With the AWS SDK, it should be assumed that any operation that returns
- * without throwing an exception was successful.In case of exceptions
+ * without throwing an exception was successful. In case of exceptions
  * all methods will return null to indicate an internal error.
  */
 
@@ -26,7 +26,7 @@ module.exports = class DynamoPost {
   async create(event) {
     const body = JSON.parse(event.body);
 
-    // The server should be respondible for getting the current time
+    // The server should be responsible for getting the current time
     // when creating a new Post, not the client
     const unixTime = Math.floor(new Date().getTime() / 1000);
 
@@ -112,8 +112,7 @@ module.exports = class DynamoPost {
     };
 
     try {
-      // DynamoDB UpdateItem
-      const result = await this.db.update(params).promise();
+      const result = await this.db.update(params).promise(); // DynamoDB UpdateItem
 
       process.env.IS_OFFLINE && console.log("UpdateItem success");
       return {

@@ -2,7 +2,7 @@
 
 const response = require('../response');
 
-// Reasons for sing async-await vs callbacks in AWS Lambda
+// Reasons for using async-await vs callbacks in AWS Lambda
 // https://advancedweb.hu/comparing-async-javascript-functions-and-callbacks-on-aws-lambda/
 
 /**
