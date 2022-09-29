@@ -62,6 +62,8 @@ As a prerequisite, install the [Serverless Framework](https://www.serverless.com
 
       npm run test:int
 
+  If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory.
+
 - ### ☁️ Prod Cloud deployment
 
   Create a new [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key) and export them as enviroment variables:
@@ -72,6 +74,10 @@ As a prerequisite, install the [Serverless Framework](https://www.serverless.com
   Deploy to AWS
 
       serverless deploy
+
+  To remove the deployed service from AWS
+
+      serverless remove
 
 
 ## 📫 API Endpoints
@@ -208,7 +214,8 @@ The username and timestamp, together, could be enough to uniquely identify a sin
 >
 > As even more relations get implemented (friends, comments, likes, friend feeds and so on) it might be worth to consider adding a graph database in front DynamoDB or instead of it.
 > 
-> #### Missing Features
+> #### Limitations
 >
-> - Pagination when getting many items at once
-> - Any kind of authentication
+> - Needs pagination for getting many items
+> - There is no authentication
+> - 
