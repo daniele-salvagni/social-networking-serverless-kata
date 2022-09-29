@@ -2,8 +2,6 @@
 # --stage option OR default provider stage OR dev
 stage: ${sls:stage}
 
-s3BackupBucket: ${sls:instanceId}-dynamobackup-${sls:stage}
-
 # serverless-dynamodb-local default configuration
 dynamodb:
   stages: # to use this plugin only in some stages
@@ -18,8 +16,3 @@ dynamodb:
       sources: # sources to populate the db with `sls dynamodb start --migrate`
         - table: ${sls:instanceId}-postsTable-${sls:stage}
           #sources: [./offline/migrations/todo-seed.json]
-
-serverless-s3-cleaner:
-  prompt: false
-  buckets:
-    - ${sls:instanceId}-dynamobackup-${sls:stage}
