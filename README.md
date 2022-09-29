@@ -1,10 +1,10 @@
-# Social Networking Serverless Kata
+# Social Networking Serverless Kata 🗣️
 
 This is my solution to the following Kata: [Social Networking Serverless Kata](https://github.com/claranet-ch/social-networking-serverless-kata)
 
 ![serverless-demo](https://user-images.githubusercontent.com/6751621/192869355-d0920bdb-305e-40de-a152-b92450c79fe1.gif)
 
-> A quick Postman demo showing two posts being created on a user's profile and then retrieving them.
+> A quick [Postman](https://www.postman.com/) demo showing two posts being created on a user's profile and then retrieving them.
 
 
 ## 🧪 Tech stack
@@ -22,10 +22,23 @@ This project has been setup for having local staging and testing environments as
 - [Jest](https://jestjs.io/) for running unit and integration tests
   - [jest-each](https://www.npmjs.com/package/jest-each) for reusing parametrised unit tests
 
+## ☁️ Cloud architecture
+
+```
+                ┌── λ createPost ───┐
+HTTP Request    ├── λ deletePost ───┤
+      |         ├── λ editPost ─────┤
+API Gateway ────┼── λ getPost ──────┼──── DynamoDB ── ⌛ λ backup ── S3 Bucket
+                ├── λ getAllPosts ──┤
+                └── λ getUserPosts ─┘
+
+# DynamoDB is not good for database analysis, so the database will be backed-up
+# to an S3 bucket. It will then be possible to query the data with Athena.
+```
 
 ## ⚙️ Setup
 
-Install the [Serverless Framework](https://www.serverless.com/framework/docs/getting-started) and the project dependencies
+As a prerequisite, install the [Serverless Framework](https://www.serverless.com/framework/docs/getting-started) and the project dependencies
 
     npm install -g serverless && npm install
 
@@ -40,6 +53,14 @@ Install the [Serverless Framework](https://www.serverless.com/framework/docs/get
   DynamoDB will store the data temporarly in-memory and will be populated with the same boilerplate data at each start.
 
 - ### 🔍 Testing
+
+  Run unit tests
+
+      npm run test
+
+  Run integration tests (requires Docker)
+
+      npm run test:int
 
 - ### ☁️ Prod Cloud deployment
 
@@ -168,9 +189,7 @@ This project will use DynamoDB. It is perfectly fine for the requirements of thi
     Entity  username (PK)    timestamp (SK)    content
     Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
 
-
 The username and timestamp, together, could be enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
-
 
 > #### Thoughts for expanding this project ⌛
 >
@@ -188,3 +207,8 @@ The username and timestamp, together, could be enough to uniquely identify a sin
 > Having the same Partition Key `USER#<USERNAME>` for both Users and Posts will allow to retrieve both the user's profile and posts in a **single transaction**. We would query for the Partition Key to be equal to a specific `USER#<USERNAME>`, and the Sort Key to be between `METADATA#<USERNAME>` and `POST$` (`$` comes just after `#` in ASCII).
 >
 > As even more relations get implemented (friends, comments, likes, friend feeds and so on) it might be worth to consider adding a graph database in front DynamoDB or instead of it.
+> 
+> #### Missing Features
+>
+> - Pagination when getting many items at once
+> - Any kind of authentication
