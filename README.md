@@ -56,7 +56,7 @@ Or set them permanently
 
 - ### 🪛 Dev environment
 
-  The following command will start and emulate everything locally
+  The following command will start and emulate everything locally (**Docker required**)
 
       npm run dev
 
@@ -70,7 +70,7 @@ Or set them permanently
 
       npm run test
 
-  Run integration tests (requires Docker)
+  Run integration tests (**Docker required**)
 
       npm run test:int
 
