@@ -4,6 +4,7 @@ service: social-networking-serverless-kata
 frameworkVersion: '3'
 
 plugins:
+  - serverless-s3-cleaner # otherwise `serverless remove` cannot delete non-empty buckets
   - serverless-dynamodb-local
   - serverless-offline
 
