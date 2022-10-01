@@ -52,7 +52,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
 [Docker](https://docs.docker.com/get-docker/) also needs to be installed for running integration tests locally and spinning un a dev environment.
 
- ### 🪛 Dev environment
+- ### 🪛 Dev environment
 
   Start the docker containers for running DynamoDB and the Admin panel
 
@@ -74,7 +74,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
   
 
- ### ✔️ Testing
+- ### ✔️ Testing
 
   Unit and integration tests are ran automatically by **Github Actions** when code is pushed to this repository. To run Unit Tests locally:
 
@@ -86,11 +86,11 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
   > If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. That file is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
 
- ### 📦 Packaging
+- ### 📦 Packaging
 
       serverless package
 
- ### ☁️ Cloud deployment
+- ### ☁️ Cloud deployment
 
   Package and automatically deploy everything to AWS
 
