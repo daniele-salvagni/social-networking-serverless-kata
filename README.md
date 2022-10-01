@@ -21,6 +21,7 @@ This project has been setup for having local dev and testing environments as wel
   - `dynamodb.admin` a DynamoDB GUI control panel
 - [Jest](https://jestjs.io/) for running unit and integration tests
   - [jest-each](https://www.npmjs.com/package/jest-each) for reusing parametrised unit tests
+- [Github Actions](https://docs.github.com/en/actions) to run unit and integration tests automatically when code is pushed
 
 ## ☁️ Cloud architecture
 
@@ -74,6 +75,8 @@ Or set them permanently
   - http://localhost:8001 - Admin panel to inspect the local DynamoDB
 
 - ### 🔍 Testing
+
+  Unit and Integration tests are ran automatically by **Github Actions** when code is pushed to this repository.
 
   Run unit tests
 
