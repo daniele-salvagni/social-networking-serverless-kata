@@ -24,12 +24,10 @@ module.exports = class DynamoPost {
    * @param APIGatewayProxyEvent event
    */
   async create(event) {
-    const body = JSON.parse(event.body);
-
-    // The server should be responsible for getting the current time
-    // when creating a new Post, not the client
+    // The server is responsible for getting the current time when creating a new Post
     const unixTime = Math.floor(new Date().getTime() / 1000);
 
+    const body = JSON.parse(event.body);
     const params = { // new item to be created
       TableName: process.env.DYNAMODB_POST_TABLE,
       Item: {
@@ -39,19 +37,10 @@ module.exports = class DynamoPost {
       },
     };
 
-    try {
-      await this.db.put(params).promise(); // DynamoDB PutItem
-      process.env.IS_OFFLINE && console.log("PutItem success");
-      return { // DyanmoDB doen NOT return a response for new items, so we build one
-        post: {
-          username: event.pathParameters.username,
-          unixtime: unixTime,
-          content: body.content,
-        }
-      }
-    } catch (error) {
-      console.warn("PutItem error =", error);
-      return null;
+    const result = await this._tryAction(this.db.put(params).promise());
+    if (result == null) return null;
+    return { // DyanmoDB doen NOT return the created item in the response
+      post: params.Item,
     }
   }
 
@@ -62,29 +51,20 @@ module.exports = class DynamoPost {
   async delete(event) {
     const params = { // composite Key of the item to be deleted
       TableName: process.env.DYNAMODB_POST_TABLE,
-      Key: {
-        username: event.pathParameters.username,
-        unixtime: parseInt(event.pathParameters.unixtime),
-      },
-      // The content of the old item is returned (but not used)
-      ReturnValues: 'ALL_OLD'
+      Key: { username: event.pathParameters.username, unixtime: parseInt(event.pathParameters.unixtime) },
+      ReturnValues: 'ALL_OLD' // The content of the old item is returned (but not used)
     };
 
-    try {
-      const result = await this.db.delete(params).promise(); // DynamoDB DeleteItem
-      if (!result.Attributes) return {};
+    const result = await this._tryAction(this.db.delete(params).promise());
 
-      process.env.IS_OFFLINE && console.log("DeleteItem success");
-      return {
-        post: {
-          username: result.Attributes.username,
-          unixtime: result.Attributes.unixtime,
-          content: result.Attributes.content,
-        }
+    if (result == null) return null;
+    if (!result.Attributes) return {};
+    return {
+      post: {
+        username: result.Attributes.username,
+        unixtime: result.Attributes.unixtime,
+        content: result.Attributes.content,
       }
-    } catch (error) {
-      console.warn("DeleteItem error =", error);
-      return null;
     }
   }
 
@@ -94,37 +74,26 @@ module.exports = class DynamoPost {
    * allowed mainly for making this Kata easier to play with.
    * @param APIGatewayProxyEvent event
    */
-  async edit(event) { // composite key and body to be modified
+  async edit(event) {
     const body = JSON.parse(event.body);
 
-    const params = {
+    const params = {  // composite key and body to be modified
       TableName: process.env.DYNAMODB_POST_TABLE,
-      Key: {
-        username: event.pathParameters.username,
-        unixtime: parseInt(event.pathParameters.unixtime),
-      },
-      ExpressionAttributeValues: {
-          ":c": body.content,
-      },
+      Key: { username: event.pathParameters.username, unixtime: parseInt(event.pathParameters.unixtime) },
+      ExpressionAttributeValues: { ":c": body.content },
       UpdateExpression: "set content = :c",
-      // Returns all of the attributes of the updated item
-      ReturnValues: 'ALL_NEW'
+      ReturnValues: 'ALL_NEW' // Returns all of the attributes of the updated item
     };
 
-    try {
-      const result = await this.db.update(params).promise(); // DynamoDB UpdateItem
+    const result = await this._tryAction(this.db.update(params).promise());
 
-      process.env.IS_OFFLINE && console.log("UpdateItem success");
-      return {
-        post: {
-          username: result.Attributes.username,
-          unixtime: result.Attributes.unixtime,
-          content: result.Attributes.content,
-        }
+    if (result == null) return null;
+    return {
+      post: {
+        username: result.Attributes.username,
+        unixtime: result.Attributes.unixtime,
+        content: result.Attributes.content,
       }
-    } catch (error) {
-      console.warn("UpdateItem error =", error);
-      return null;
     }
   }
   
@@ -135,27 +104,19 @@ module.exports = class DynamoPost {
   async get(event) {
     const params = { // composite key of the item to be retrieved
       TableName: process.env.DYNAMODB_POST_TABLE,
-      Key: {
-        username: event.pathParameters.username,
-        unixtime: parseInt(event.pathParameters.unixtime),
-      },
+      Key: { username: event.pathParameters.username, unixtime: parseInt(event.pathParameters.unixtime) },
     };
 
-    try {
-      const result = await this.db.get(params).promise(); // DynamoDB GetItem
-      if (!result.Item) return {};
+    const result = await this._tryAction(this.db.get(params).promise());
 
-      process.env.IS_OFFLINE && console.log("GetItem success");
-      return {
-        post: {
-          username: result.Item.username,
-          unixtime: result.Item.unixtime,
-          content: result.Item.content,
-        }
+    if (result == null) return null;
+    if (!result.Item) return {};
+    return {
+      post: {
+        username: result.Item.username,
+        unixtime: result.Item.unixtime,
+        content: result.Item.content,
       }
-    } catch (error) {
-      console.warn("GetItem error =", error);
-      return null;
     }
   }
 
@@ -169,23 +130,18 @@ module.exports = class DynamoPost {
       ScanIndexForward: false,
     };
 
-    try {
-      const result = await this.db.scan(params).promise(); // DynamoDB Scan
-      if (!result.Count === 0) return {};
+    const result = await this._tryAction(this.db.scan(params).promise());
 
-      process.env.IS_OFFLINE && console.log("Scan success");
-      return {
-        total: result.Count,
-        posts: result.Items.map((post => ({
-          username: post.username,
-          unixtime: post.unixtime,
-          content: post.content,
-        }))),
-      }
-    } catch (error) {
-      console.warn("Scan error =", error);
-      return null;
-    }
+    if (result == null) return null;
+    if (result.Count == 0) return {};
+    return {
+      total: result.Count,
+      posts: result.Items.map((post => ({
+        username: post.username,
+        unixtime: post.unixtime,
+        content: post.content,
+      }))),
+    };
   }
 
   /**
@@ -195,29 +151,33 @@ module.exports = class DynamoPost {
   async getAllUser(event) {
     const params = { // partition key equals to username
       TableName: process.env.DYNAMODB_POST_TABLE,
-  
-      ExpressionAttributeValues: {
-        ":username": event.pathParameters.username,
-      },
+      ExpressionAttributeValues: { ":username": event.pathParameters.username },
       KeyConditionExpression: "username = :username",
       ScanIndexForward: false,
     };
 
-    try {
-      const result = await this.db.query(params).promise(); // DynamoDB Query
-      if (!result.Count === 0) return {};
+    const result = await this._tryAction(this.db.query(params).promise());
 
-      process.env.IS_OFFLINE && console.log("Query success");
-      return {
-        total: result.Count,
-        posts: result.Items.map((post => ({
-          username: post.username,
-          unixtime: post.unixtime,
-          content: post.content,
-        }))),
-      }
+    if (result == null) return null;
+    if (result.Count == 0) return {};
+    return {
+      total: result.Count,
+      posts: result.Items.map((post => ({
+        username: post.username,
+        unixtime: post.unixtime,
+        content: post.content,
+      }))),
+    };
+  }
+
+  /**
+   * Tries to execute an Action on the database, returns the result or null in case of error.
+   */
+  async _tryAction(action) {
+    try {
+      return await action;
     } catch (error) {
-      console.warn("Query error =", error);
+      console.warn("DB Action Error =", error);
       return null;
     }
   }
