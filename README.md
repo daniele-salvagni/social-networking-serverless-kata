@@ -9,19 +9,16 @@ This is my solution to the following Kata: [Social Networking Serverless Kata](h
 
 ## 🧪 Tech stack
 
-This project has been setup for having local dev and testing environments as well as a cloud environment. Parts of the code that had some logic have been separated from dependencies and unit tested. A couple integration tests are in place to ensure that everyting plays well togeter.
-
 - [Amazon Web Services](https://aws.amazon.com/) as the Cloud provider
 - [Serverless](https://www.serverless.com/) for development and deployment
-  - [serverless-dynamodb-local](https://www.serverless.com/plugins/serverless-dynamodb-local): used only for the `--migrate` and `--seed` options
   - [serverless-offline](https://www.serverless.com/plugins/serverless-offline): to emulate AWS λ and API Gateway locally
-- [Docker](https://www.docker.com/) for providing the following containers:
-  - `dynamodb.local` a local DynamoDB instance for dev testing
+- [Docker](https://www.docker.com/) provides containers for development and testing:
+  - `dynamodb.local` a local DynamoDB instance for development
   - `dynamodb.test` a local DynamoDB instance for running integration tests
   - `dynamodb.admin` a DynamoDB GUI control panel
 - [Jest](https://jestjs.io/) for running unit and integration tests
   - [jest-each](https://www.npmjs.com/package/jest-each) for reusing parametrised unit tests
-- [Github Actions](https://docs.github.com/en/actions) to run unit and integration tests automatically when code is pushed
+- [Github Actions](https://docs.github.com/en/actions) runs unit and integration tests automatically when code is pushed
 
 ## ☁️ Cloud architecture
 
@@ -32,10 +29,8 @@ HTTP Request    ├── λ deletePost ───┤
 API Gateway ────┼── λ getPost ──────┼──── DynamoDB ── ⌛ λ backup ── S3 Bucket
                 ├── λ getAllPosts ──┤
                 └── λ getUserPosts ─┘
-
-# DynamoDB is not good for database analysis, so the database will be backed-up
-# to an S3 bucket. It will then be possible to query the data with Athena.
 ```
+DynamoDB is not good for data analysis, so the database will be automatically backed-up to an S3 bucket. It will then be possible to query the data with [Amazon Athena](https://aws.amazon.com/athena/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc).
 
 ## ⚙️ Setup
 
@@ -43,30 +38,29 @@ As a prerequisite, install the [Serverless Framework](https://www.serverless.com
 
     npm install -g serverless && npm install
 
-Create a new [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key) and export them as enviroment variables:
+Create and set [IAM User and Access Keys](https://www.serverless.com/framework/docs/providers/aws/guide/credentials#create-an-iam-user-and-access-key)
 
+    # Set them temporarily
     export AWS_ACCESS_KEY_ID=<your-key-here>
     export AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
-
-Or set them permanently
-
+    
+    # Set them permanently
     serverless config credentials \
       --provider aws \
-      --key AKIAIOSFODNN7EXAMPLE \
-      --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      --key <your-key-here> \
+      --secret <your-secret-key-here>
 
-- ### 🪛 Dev environment
+[Docker](https://docs.docker.com/get-docker/) also needs to be installed for running integration tests locally and spinning un a dev environment.
 
-  Start and emulate everything locally (**Docker required**)
+ ### 🪛 Dev environment
 
-      # Start the Docker containers for DynamoDB and the Admin panel
-      npm run dev:up
+  Start the docker containers for running DynamoDB and the Admin panel
 
-      # Start Lambda functions and Gateway locally
+      npm run dev:start
+
+  Start the λ Functions and API Gateway locally (Ctrl-C to stop)
+
       npm run dev
-
-      # Stop the Docker containers
-      npm run dev:dn
 
   The following will be brought up:
 
@@ -74,37 +68,39 @@ Or set them permanently
   - http://localhost:8000 - DynamoDB (in-memory storage)
   - http://localhost:8001 - Admin panel to inspect the local DynamoDB
 
-- ### 🔍 Testing
+  Stop the docker containers
 
-  Unit and Integration tests are ran automatically by **Github Actions** when code is pushed to this repository.
+      npm run dev:stop
 
-  Run unit tests
+  
+
+ ### ✔️ Testing
+
+  Unit and integration tests are ran automatically by **Github Actions** when code is pushed to this repository. To run Unit Tests locally:
 
       npm run test
 
-  Run integration tests (**Docker required**)
+  Run Integration Tests locally (Docker required):
 
       npm run test:int
 
-  > If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. This is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
+  > If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. That file is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
 
-- ### ☁️ Cloud deployment
-
-  Deploy to AWS
-
-      serverless deploy
-
-  To remove the deployed service from AWS
-
-      serverless remove
-
-  > S3 Buckets used for backups must be removed manually as the name is randomly generated. This is required for the app to be deployable on multiple accounts as the Bucket name must be unique globally.
-
-- ### 📦 Packaging
+ ### 📦 Packaging
 
       serverless package
 
-  `node_modules` will be only included in the Backup Lambda function, the other lambdas have no dependencies.
+ ### ☁️ Cloud deployment
+
+  Package and automatically deploy everything to AWS
+
+      serverless deploy
+
+  Remove the deployed service from AWS
+
+      serverless remove
+
+  > S3 Buckets used for DB backups must be removed manually as their name is "randomly" generated. This is required for the app to be deployable on multiple accounts as the Bucket name must be unique globally.
 
 ## 📫 API Endpoints
 
@@ -118,11 +114,11 @@ Or set them permanently
     🟪 DELETE  posts/:username/:timestamp  # Deleting a Post 
 
 
-- ### Creating a new Post
+ ### Creating a new Post
 
   - **Request:** `POST /posts/:username`
   
-    The post message must be added to the request body
+    The message content must be added to the request body
 
         { content: "Lorem ipsum..." }
 
@@ -138,7 +134,7 @@ Or set them permanently
 
     The Location header will point to the created post `/posts/testuser/1667654321`
 
-- ### Getting all Posts by one user (Timeline)
+ ### Getting all Posts by one user (Timeline)
 
   - **Request:** `GET /posts/:username` 
 
@@ -160,13 +156,13 @@ Or set them permanently
           ]
         }
 
-- ### Getting a Post
+ ### Getting a Post
 
   - **Request:** `GET posts/:username/:timestamp`
 
   - **Response:** `500, 404, 200` the response body will contain the requested post
 
-- ### Editing a Post
+ ### Editing a Post
 
   - **Request:** `PUT posts/:username/:timestamp`
 
@@ -174,13 +170,13 @@ Or set them permanently
 
     The **Location** header will point to the modified post
 
-- ### Deleting a Post
+ ### Deleting a Post
 
   - **Request:** `DELETE posts/:username/:timestamp`
 
   - **Response:** `500, 404, 204` the response body be empty
 
-- ### Getting all Posts
+ ### Getting all Posts
 
   - **Request:** `GET posts`
 
@@ -188,7 +184,7 @@ Or set them permanently
 
 ---
 
-## 📐 Design Choices
+## 🎯 Design Choices
 
 There are a couple entities for which it is worth thinking about before solving this Kata:
 
@@ -219,9 +215,9 @@ This project will use DynamoDB. It is perfectly fine for the requirements of thi
     Entity  username (PK)    timestamp (SK)    content
     Post    <USERNAME>       <TIMESTAMP>       <MESSAGE>
 
-The username and timestamp, together, are enough to uniquely identify a single post (an user could be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
+The username and timestamp, together, are enough to uniquely identify a single post (an user will be limited to one post per second). [ULID](https://github.com/ulid/spec) could be an alterative to using the timestamp as the Sort Key.
 
-> #### Thoughts for expanding this project ⌛
+> ### Thoughts for expanding this project
 >
 > As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)  
 > By having all data in a single table and with some denormalization, typical for NoSQL databases, it would be possible to get related data in a single query.
@@ -240,6 +236,6 @@ The username and timestamp, together, are enough to uniquely identify a single p
 > 
 > #### Limitations
 >
+> - Input should be validated
 > - Needs pagination for getting many items
 > - There is no authentication
-> - Typescript would allow for more robust code

@@ -4,9 +4,9 @@
   "description": "A serverless social networking application similar to Twitter",
   "scripts": {
     "postinstall": "",
-    "dev:up": "docker-compose up -d dynamodb.local dynamodb.admin && serverless dynamodb start --migrate",
+    "dev:start": "docker-compose up -d dynamodb.local dynamodb.admin && serverless dynamodb start --migrate",
     "dev": "sls offline start",
-    "dev:dn": "docker-compose stop dynamodb.local dynamodb.admin",
+    "dev:stop": "docker-compose stop dynamodb.local dynamodb.admin",
     "test": "IS_LOCAL=true jest --testRegex '\\.test\\.js'",
     "pretest:int": "docker-compose up -d dynamodb.testing && serverless dynamodb start --migrate && bash offlineStart.sh",
     "test:int": "IS_LOCAL=true jest --testRegex '\\.int\\.js'",
