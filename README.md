@@ -58,14 +58,20 @@ Or set them permanently
 
   Start and emulate everything locally (**Docker required**)
 
+      # Start the Docker containers for DynamoDB and the Admin panel
+      npm run dev:up
+
+      # Start Lambda functions and Gateway locally
       npm run dev
 
-  The following will then be accessible:
+      # Stop the Docker containers
+      npm run dev:dn
+
+  The following will be brought up:
 
   - http://localhost:3000 - API Endpoints
+  - http://localhost:8000 - DynamoDB (in-memory storage)
   - http://localhost:8001 - Admin panel to inspect the local DynamoDB
-  
-  DynamoDB will store the data temporarly in-memory until the Docker container is restarted.
 
 - ### 🔍 Testing
 
@@ -77,7 +83,7 @@ Or set them permanently
 
       npm run test:int
 
-  If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. This is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
+  > If for some reason integration tests get stuck, manually delete the `.offline.pid` file from the root directory. This is used to run `serverless offline` in background and wait for the endpoints to be available before running tests.
 
 - ### ☁️ Cloud deployment
 
@@ -94,6 +100,8 @@ Or set them permanently
 - ### 📦 Packaging
 
       serverless package
+
+  `node_modules` will be only included in the Backup Lambda function, the other lambdas have no dependencies.
 
 ## 📫 API Endpoints
 
@@ -148,8 +156,6 @@ Or set them permanently
             }
           ]
         }
-
-    The **Location** header will point to the created post `/posts/testuser/1667654321`
 
 - ### Getting a Post
 
