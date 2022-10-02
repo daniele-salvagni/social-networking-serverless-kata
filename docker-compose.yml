@@ -14,9 +14,10 @@ services:
     image: amazon/dynamodb-local
     ports:
       - "8000:8000"
+    # For having persistent data use the following:
     # volumes:
     #   - ./db:/home/dynamodblocal/db
-    # command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/home/dynamodblocal/db"]
+    # command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/db
     command: -jar DynamoDBLocal.jar -sharedDb -inMemory
     working_dir: /home/dynamodblocal
     expose:

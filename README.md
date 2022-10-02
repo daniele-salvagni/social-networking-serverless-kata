@@ -6,7 +6,6 @@ This is my solution to the following Kata: [Social Networking Serverless Kata](h
 
 > A quick [Postman](https://www.postman.com/) demo showing two posts being created on a user's profile and then retrieving them.
 
-
 ## 🧪 Tech stack
 
 - [Amazon Web Services](https://aws.amazon.com/) as the Cloud provider
@@ -72,8 +71,6 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
       npm run dev:stop
 
-  
-
 - ### ✔️ Testing
 
   Unit and integration tests are ran automatically by **Github Actions** when code is pushed to this repository. To run Unit Tests locally:
@@ -120,7 +117,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
   
     The message content must be added to the request body
 
-        { content: "Lorem ipsum..." }
+        { content: "This is my first post" }
 
   - **Response:** `500, 201` the response body will contain the created item:
 
@@ -128,7 +125,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
           "post": {
             "username": "testuser",
             "unixtime": 1667654321,
-            "content": "Lorem ipsum..."
+            "content": "This is my first post"
           }
         }
 
@@ -145,13 +142,13 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
           "posts": [
             {
               "username": "testuser",
-              "unixtime": 1667654321,
-              "content": "Lorem ipsum..."
+              "unixtime": 1667654322,
+              "content": "This is my second post"
             },
             {
               "username": "testuser",
-              "unixtime": 1667654322,
-              "content": "This is my second post"
+              "unixtime": 1667654321,
+              "content": "This is my first post"
             }
           ]
         }

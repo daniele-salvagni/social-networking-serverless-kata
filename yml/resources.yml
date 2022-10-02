@@ -1,35 +1,21 @@
-postsTable:
-  Type: AWS::DynamoDB::Table
-  Properties:
-    TableName: ${self:service}-postsTable-${sls:stage}
-    AttributeDefinitions:
-      - AttributeName: username
-        AttributeType: S
-      - AttributeName: unixtime
-        AttributeType: N
-    KeySchema:
-      - AttributeName: username
-        KeyType: HASH
-      - AttributeName: unixtime
-        KeyType: RANGE
-    BillingMode: PAY_PER_REQUEST
-    # This will backup and allow for easier exports to S3
-    PointInTimeRecoverySpecification:
-      PointInTimeRecoveryEnabled: true
+Resources:
+  postsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:service}-postsTable-${sls:stage}
+      AttributeDefinitions:
+        - AttributeName: username
+          AttributeType: S
+        - AttributeName: unixtime
+          AttributeType: N
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+        - AttributeName: unixtime
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
 
-s3BackupBucket:
-  Type: AWS::S3::Bucket
-  Properties:
-    BucketName: ${sls:instanceId}-dynamobackup-${sls:stage}
-    CorsConfiguration:
-      CorsRules:
-        - AllowedOrigins:
-            - "*"
-          AllowedHeaders:
-            - "*"
-          AllowedMethods:
-            - GET
-            - PUT
-            - POST
-            - HEAD
-          MaxAge: 3000
+  s3BackupBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${sls:instanceId}-dynamobackup-${sls:stage}

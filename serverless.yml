@@ -13,8 +13,7 @@ custom: ${file(yml/custom.yml)}
 
 functions: ${file(yml/functions.yml)}
 
-resources:
-  Resources: ${file(yml/resources.yml)}
+resources: ${file(yml/resources.yml)}
 
 package:
   individually: true
