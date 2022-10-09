@@ -42,7 +42,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
     # Set them temporarily
     export AWS_ACCESS_KEY_ID=<your-key-here>
     export AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
-    
+
     # Set them permanently
     serverless config credentials \
       --provider aws \
@@ -97,24 +97,22 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
       serverless remove
 
-  > S3 Buckets used for DB backups must be removed manually as their name is "randomly" generated. This is required for the app to be deployable on multiple accounts as the Bucket name must be unique globally.
-
 ## 📫 API Endpoints
 
 > The endpoints that this Kata required to implement are marked with ✅, extras with 🟪
 
     🟪 GET     posts                       # Getting all Posts
-    ✅ POST    posts/:username             # Creating a new Post      
-    ✅ GET     posts/:username             # Getting an user's Timeline     
-    🟪 GET     posts/:username/:timestamp  # Getting a Post     
-    🟪 PUT     posts/:username/:timestamp  # Editing a Post    
-    🟪 DELETE  posts/:username/:timestamp  # Deleting a Post 
+    ✅ POST    posts/:username             # Creating a new Post
+    ✅ GET     posts/:username             # Getting an user's Timeline
+    🟪 GET     posts/:username/:timestamp  # Getting a Post
+    🟪 PUT     posts/:username/:timestamp  # Editing a Post
+    🟪 DELETE  posts/:username/:timestamp  # Deleting a Post
 
 
  ### Creating a new Post
 
   - **Request:** `POST /posts/:username`
-  
+
     The message content must be added to the request body
 
         { content: "This is my first post" }
@@ -133,7 +131,7 @@ Create and set [IAM User and Access Keys](https://www.serverless.com/framework/d
 
  ### Getting all Posts by one user (Timeline)
 
-  - **Request:** `GET /posts/:username` 
+  - **Request:** `GET /posts/:username`
 
   - **Response:** `500, 404, 200` the response body will contain the user posts in reverse-chronological order and the post count:
 
@@ -196,7 +194,7 @@ There are a couple entities for which it is worth thinking about before solving 
 The following access patterns will be implemented, the ~~striked~~ ones will be ignored:
 
 - ~~**Users:** It should be possible to *Create*, *Read* and *Delete* users. Users must have an unique username.~~
-  
+
 - **Posts:** It should be possible to *Create*, *Read* and *Delete* posts. A post needs an username and some text content to be created. Some sort of id will be needed to read or delete a single post.
 
 - **User Timeline:** It should be possible to get all posts from a single user in reverse-chronological order.
@@ -216,21 +214,21 @@ The username and timestamp, together, are enough to uniquely identify a single p
 
 > ### Thoughts for expanding this project
 >
-> As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)  
+> As the requirements increase, some design changes should be made. A common NoSQL pattern would be to use a single table design: [DynamoDB Design Patterns for Single Table Design](https://www.serverlesslife.com/DynamoDB_Design_Patterns_for_Single_Table_Design.html)
 > By having all data in a single table and with some denormalization, typical for NoSQL databases, it would be possible to get related data in a single query.
 >
 > At the moment we just have a collection of posts. If we wanted to add information about the user it could look something like this:
-> 
+>
 >     MainTable
-> 
+>
 >     Entity    Partition Key       Sort Key
 >     User      USER#<USERNAME>     METADATA#<USERNAME>
 >     Post      USER#<USERNAME>     POST#<USERNAME>#<TIMESTAMP>
-> 
+>
 > Having the same Partition Key `USER#<USERNAME>` for both Users and Posts will allow to retrieve both the user's profile and posts in a **single transaction**. We would query for the Partition Key to be equal to a specific `USER#<USERNAME>`, and the Sort Key to be between `METADATA#<USERNAME>` and `POST$` (`$` comes just after `#` in ASCII).
 >
 > As even more relations get implemented (friends, comments, likes, friend feeds and so on) it might be worth to consider adding a graph database in front DynamoDB or instead of it.
-> 
+>
 > #### Limitations
 >
 > - Input should be validated
